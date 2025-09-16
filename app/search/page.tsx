@@ -60,7 +60,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
         {/* Search Bar */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-          <form className="flex gap-4">
+          <form method="GET" action="/search" className="flex gap-4">
             <div className="flex-1">
               <Input
                 placeholder="Search by name, location, or case number..."

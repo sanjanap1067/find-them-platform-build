@@ -18,6 +18,8 @@ interface SearchResultsProps {
 }
 
 export async function SearchResults({ searchParams }: SearchResultsProps) {
+  console.log("[v0] SearchResults called with params:", searchParams)
+
   const supabase = await createClient()
 
   // Build query
@@ -25,41 +27,52 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
 
   // Apply search filters
   if (searchParams.q) {
+    console.log("[v0] Applying text search for:", searchParams.q)
     query = query.or(
       `name.ilike.%${searchParams.q}%,last_seen_location.ilike.%${searchParams.q}%,case_number.ilike.%${searchParams.q}%`,
     )
   }
 
   if (searchParams.age_min) {
+    console.log("[v0] Applying age_min filter:", searchParams.age_min)
     query = query.gte("age", Number.parseInt(searchParams.age_min))
   }
 
   if (searchParams.age_max) {
+    console.log("[v0] Applying age_max filter:", searchParams.age_max)
     query = query.lte("age", Number.parseInt(searchParams.age_max))
   }
 
   if (searchParams.gender) {
+    console.log("[v0] Applying gender filter:", searchParams.gender)
     query = query.eq("gender", searchParams.gender)
   }
 
   if (searchParams.location) {
+    console.log("[v0] Applying location filter:", searchParams.location)
     query = query.ilike("last_seen_location", `%${searchParams.location}%`)
   }
 
   if (searchParams.date_from) {
+    console.log("[v0] Applying date_from filter:", searchParams.date_from)
     query = query.gte("last_seen_date", searchParams.date_from)
   }
 
   if (searchParams.date_to) {
+    console.log("[v0] Applying date_to filter:", searchParams.date_to)
     query = query.lte("last_seen_date", searchParams.date_to)
   }
 
   const { data: cases, error } = await query.order("created_at", { ascending: false })
 
+  console.log("[v0] Query result - cases count:", cases?.length, "error:", error)
+
   if (error) {
+    console.log("[v0] Database error:", error)
     return (
       <div className="text-center py-12">
         <p className="text-red-600">Error loading search results. Please try again.</p>
+        <p className="text-sm text-gray-500 mt-2">Error: {error.message}</p>
       </div>
     )
   }
